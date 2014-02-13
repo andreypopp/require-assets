@@ -15,7 +15,9 @@
     "require-assets",
     "assets",
     "require",
-    "commonjs"
+    "commonjs",
+    "browserify-transform",
+    "xcss-transform"
   ],
   "author": "Andrey Popp <8mayday@gmail.com>",
   "license": "MIT",
