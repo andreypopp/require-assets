@@ -47,6 +47,11 @@ function transform(filename, options) {
 
   var registry = requireAssets.getRegistry(options);
 
+  console.warn(filename);
+  if (/\.css$/.exec(filename) && options.css) {
+    return transformCSS(filename, {registry: registry});
+  }
+
   var src = '';
   var basedir = path.dirname(filename);
 
@@ -66,6 +71,45 @@ function transform(filename, options) {
         var end = item.offset + item.name.length + 2;
         src = src.substring(0, start) + JSON.stringify(url) + src.substring(end);
       }
+
+      this.queue(src);
+      this.queue(null);
+    });
+}
+
+function transformCSS(filename, options) {
+  options = options || {};
+
+  var registry = requireAssets.getRegistry(options);
+
+  var src = '';
+  var basedir = path.dirname(filename);
+  
+  return through(
+    function(c) { src += c; },
+    function() { 
+      // TODO: needs a better parser!
+      var re = /url\(([^\)]+)\)/;
+      var refs = [];
+      var cur = src;
+      var offset = 0;
+      var m;
+
+      while (cur && (m = cur.match(re))) {
+        var start = m.index + offset;
+        var end = start + m[0].length;
+        refs.push({
+          start: start,
+          end: end,
+          name: m[1].trim()
+        });
+
+        offset = offset + end - start;
+        cur = cur.substring(m.index + m[0].length);
+      }
+
+      console.log(refs);
+
       this.queue(src);
       this.queue(null);
     });
