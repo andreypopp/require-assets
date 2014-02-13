@@ -7,7 +7,6 @@ var fs            = require('fs');
 var through       = require('through');
 var path          = require('path');
 var resolve       = require('resolve/lib/sync');
-var isString      = require('lodash').isString;
 var createMiner   = require('mine').createMiner;
 var requireAssets = require('./index');
 

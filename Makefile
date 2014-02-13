@@ -9,7 +9,7 @@ example::
 	$(MAKE) -C example/ assets.json start
 
 lint:
-	@$(BIN)/jshint compiler.js expression-compiler.js index.js runtime.js utils.js
+	@$(BIN)/jshint *.js
 
 test:: test-unit test-functional
 
