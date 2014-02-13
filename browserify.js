@@ -1,4 +1,7 @@
 "use strict";
+/**
+ * Browserify transform and plugin for require-assets.
+ */
 
 var fs            = require('fs');
 var through       = require('through');
@@ -11,6 +14,12 @@ var requireAssets = require('./index');
 var IDENTIFIER  = 'requireAssets';
 var miner       = createMiner(IDENTIFIER);
 
+/**
+ * Browserify entry point, decides which one to activate — transform or plugin.
+ *
+ * @param {Browserify|String} b
+ * @param {Object} options
+ */
 module.exports = function(b, options) {
   if (typeof b.bundle === 'function' && typeof b.transform === 'function') {
     return plugin(b, options);
@@ -19,30 +28,18 @@ module.exports = function(b, options) {
   }
 }
 
-function plugin(b, options) {
-  var output = options && (options.o || options.output);
-
-  if (!output) {
-    throw new Error(
-      'provide output for require-assets/browserify: ' +
-      'browserify -p [ require-assets/browserify --output ./url-filename.json ] ...');
-  }
-
-  var registry = requireAssets.getRegistry(options);
-
-  b.transform(transform);
-
-  b.on('bundle', function(stream) {
-    stream.on('end', function() {
-      fs.writeFile(output, JSON.stringify(registry.urlToFilename), function(err) {
-        if (err) stream.emit('error', err);
-      });
-    });
-  });
-
-  return b;
-}
-
+/**
+ * require-assets browserify transform
+ *
+ * Populates registry by collecting requireAssets(...) calls.
+ *
+ * Command line usage:
+ *
+ *    % browserify -t require-assets/browserify ./assets.json ] ...
+ *
+ * @param {String} b
+ * @param {Object} options
+ */
 function transform(filename, options) {
   options = options || {};
 
@@ -70,4 +67,41 @@ function transform(filename, options) {
       this.queue(src);
       this.queue(null);
     });
+}
+
+/**
+ * require-assets browserify plugin
+ *
+ * Installs require-assets transform and writes resulted registry onto
+ * filesystem.
+ *
+ * Command line usage:
+ *
+ *    % browserify -p [ require-assets/browserify --output ./assets.json ] ...
+ *
+ * @param {Browserify} b
+ * @param {Object} options
+ */
+function plugin(b, options) {
+  var output = options && (options.o || options.output);
+
+  if (!output) {
+    throw new Error(
+      'provide output for require-assets/browserify: ' +
+      'browserify -p [ require-assets/browserify --output ./url-filename.json ] ...');
+  }
+
+  var registry = requireAssets.getRegistry(options);
+
+  b.transform(transform);
+
+  b.on('bundle', function(stream) {
+    stream.on('end', function() {
+      fs.writeFile(output, JSON.stringify(registry.urlToFilename), function(err) {
+        if (err) stream.emit('error', err);
+      });
+    });
+  });
+
+  return b;
 }

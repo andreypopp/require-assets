@@ -1,16 +1,22 @@
 "use strict";
-
+/**
+ * Node runtime.
+ */
 var path                = require('path');
 var fs                  = require('fs');
 var getCallsiteDirname  = require('get-callsite-dirname');
 var resolve             = require('resolve/lib/sync');
 var isString            = require('lodash').isString;
 
+/**
+ * Create a new assets registry.
+ */
 function createRegistry(options) {
   options = options || {};
 
   var registry = {
     root: options.root || process.cwd(),
+
     prefix: options.prefix || process.env.REQUIRE_STATIC_PREFIX || '/assets/',
 
     urlToFilename: {},
@@ -37,18 +43,35 @@ function createRegistry(options) {
   return registry;
 }
 
-// XXX: We can make it more useful (like returning the same registry when we get
-// the same args).
+
+/**
+ * Help from getting registry out of options.
+ *
+ * Works as follows:
+ *
+ *  - check if options.registry is already here
+ *    - if it's a string, interpret as filename
+ *    - otherwise return
+ *  - check if options.prefix or options.root is available and create a new
+ *    registry with these parameters
+ *  - otherwise return global registry
+ *
+ * XXX: We can make it more useful (like returning the same registry when we get
+ * the same args).
+ */
 function getRegistry(options) {
-  if (options.prefix || options.root) {
-    return createRegistry(options);
-  } else if (options.registry) {
+  if (options.registry) {
     return isString(options.registry) ? fromFilename(options.registry) : options.registry;
+  } else if (options.prefix || options.root) {
+    return createRegistry(options);
   } else {
     return process.__requireStaticRegistry;
   }
 }
 
+/**
+ * Construct a new registry from a JSON object.
+ */
 function fromJSON(data, options) {
   if (isString(data))
     data = JSON.parse(data);
@@ -60,36 +83,39 @@ function fromJSON(data, options) {
   return registry;
 }
 
+/**
+ * Construct a new registry by reading it from filesystem.
+ */
 function fromFilename(filename, options) {
   var data = fs.readFileSync(filename, 'utf8');
   return fromJSON(data);
 }
 
+/**
+ * Configure a new global registry.
+ */
 function configure(options) {
-  process.__requireStaticRegistry = createRegistry(options);
+  process.__requireStaticRegistry = options.requireAssets && options.urlToFilename ?
+    options : createRegistry(options);
 }
 
-function configureFromJSON(data, options) {
-  process.__requireStaticRegistry = fromJSON(data, options);
-}
-
-function configureFromFilename(filename, options) {
-  process.__requireStaticRegistry = fromFilename(filename, options);
-}
-
+/**
+ * Initialize registry on process so even if app includes several versions of 
+ * require-assets we still have a single registry.
+ *
+ * TODO: If registry already exists check its version and throw on major version
+ * incompatibility.
+ */
 if (!process.__requireStaticRegistry) {
-  process.__requireStaticRegistry = createRegistry();
+  var registry = process.__requireStaticRegistry = createRegistry();
 }
 
-module.exports = process.__requireStaticRegistry.requireAssets;
-module.exports.requireAssets = process.__requireStaticRegistry.requireAssets;
-module.exports.registry = process.__requireStaticRegistry;
-
-module.exports.fromJSON = fromJSON;
-module.exports.fromFilename = fromFilename;
-
-module.exports.configure = configure
-module.exports.configureFromJSON = configureFromJSON;
-module.exports.configureFromFilename = configureFromFilename;
+module.exports = registry.requireAssets;
+module.exports.requireAssets = registry.requireAssets;
+module.exports.registry = registry;
 
 module.exports.getRegistry = getRegistry;
+module.exports.configure = configure
+module.exports.createRegistry = createRegistry;
+module.exports.fromJSON = fromJSON;
+module.exports.fromFilename = fromFilename;

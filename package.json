@@ -35,6 +35,7 @@
   "devDependencies": {
     "express": "~3.4.8",
     "xcss": "~1.2.4",
-    "browserify": "~3.28.2"
+    "browserify": "~3.28.2",
+    "jshint": "~2.4.3"
   }
 }
