@@ -5,7 +5,7 @@ REPONAME = $(shell echo $(REPO) | sed -E 's_.+:([a-zA-Z0-9_\-]+)/([a-zA-Z0-9_\-]
 install link:
 	@npm $@
 
-example:
+example::
 	$(MAKE) -C example/ assets.json start
 
 lint:

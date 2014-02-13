@@ -29,7 +29,8 @@
     "get-callsite-dirname": "~0.1.0",
     "resolve": "~0.6.1",
     "through": "~2.3.4",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "mine": "git+https://github.com/andreypopp/mine#master"
   },
   "devDependencies": {
     "express": "~3.4.8",
