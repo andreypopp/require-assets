@@ -30,5 +30,10 @@
     "resolve": "~0.6.1",
     "through": "~2.3.4",
     "lodash": "~2.4.1"
+  },
+  "devDependencies": {
+    "express": "~3.4.8",
+    "xcss": "~1.2.4",
+    "browserify": "~3.28.2"
   }
 }

@@ -11,7 +11,7 @@ function makeServeStatic(registry) {
     var filename = registry.urlToFilename[req.originalUrl];
     if (!filename) return next();
     // XXX: sendfile?!
-    fs.readFileStream(filename).pipe(res);
+    fs.createReadStream(filename).pipe(res);
   }
 }
 

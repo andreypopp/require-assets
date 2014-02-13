@@ -1,64 +1,91 @@
 # require-assets
 
-An approach to package and reuse static assets in your application. The idea is
-to resolve references to static assets across your code and stylesheets to URLs.
+An approach to package and re-use static assets. The idea is to resolve
+references to static assets across a codebase to URLs.
+
+[module id]: http://nodejs.org/api/modules.html#modules_file_modules
 
 ## Installation
 
-As usual, via npm:
+Install via npm:
 
     % npm install git+https://github.com/andreypopp/require-assets.git
 
-It's not yet released, so pull from a repository.
+## Example app
 
-## Extracting assets from client code with browserify
+Directory `./example` in the repository contains an example application, run it
+with:
 
-You can get references to assets by using `requireAssets(...)` function which works
-similar to CommonJS's `require(..)` but returns URLs of the assets instead of
-its contents:
+    % make install example
 
-    var requireAssets = require('require-assets');
+## Concepts
 
-    var image = require('./image.png');
-    console.log(image) // prints an URL
+The library exports a single function `requireAssets(...)`. It accepts an asset
+[module id][] and returns a corresponding URL.
+
+Internally it maintains a registry — a mapping from URLs to filenames. Later you
+can use this registry to setup a server (or deploy on CDN) and serve required
+files under expected URLs.
+
+## Extracting asset registry from code
+
+When referencing assets from JavaScript runtime, you'd need to import
+`require-assets` under `requireAssets` identifier:
+
+    var requireAssets = require('require-assets')
+
+Then you can use it to get the URL of the needed static assets (an example uses
+[React][] library):
+
+    var Spinner = React.createClass({
+
+      render: function() {
+        return <img src={requireAssets('./spinner.gif')} />
+      }
+    })
+
+If code executes on server (Node.js) then you will be able to access the
+registry via `requireAssets.registry`.
+
+Otherwise you'd need to extract the registry from your JavaScript code. Library
+provides `require-assets/browserify` transform for browserify which helps with
+that:
 
     % browserify -p [ require-assets/browserify --output ./assets.json ] ...
 
-## Extracting assets from server code
+## Extracting asset registry from stylesheets
 
-If you are happy [React][react] user you probably would want to pre-render UI on
-server. You can have all URLs to your assets pointing to the right locations
-still by using exactly the same code as above:
+It is also useful to be able to reference assets (such as fonts, images, ...)
+from stylesheets.
 
-    var requireAssets = require('require-assets');
+If you are happen to use [xcss][], it is quite straightforward:
 
-    var image = require('./image.png');
-    console.log(image) // prints an URL, something like /assets/image.png
+    @require "require-assets/url" as url
 
-You can access assets registry in memory via `requireAssets.registry`.
+    .Component {
+      background-image: url(./spinner.gif)
+    }
 
-## Extracting assets from stylesheets with xcss
+THe library includes transform for [xcss][] transforms which resolves arguments
+of `url(...)` calls and builds an asset registry from that:
 
     % xcss -t [ require-assets/xcss --output ./assets.json ] ...
 
 ## Serving assets with connect/express middleware
 
-Library includes basic connect/request middleware to serve asset registry to a
+The library includes basic connect/request middleware to serve asset registry to a
 browser:
 
-    var app   = require('express');
+    var app           = require('express');
     var requireAssets = require('require-assets');
-    var serve = require('require-assets/middleware');
+    var serve         = require('require-assets/middleware');
 
-    // previously you created this by running browserify or xcss over the
-    // sources
+    // you created this by running browserify or xcss over the sources
     var registry = requireAssets.fromFilename('./assets.json');
 
     app
       .use(serve(registry))
       .listen(3000);
-
-## Configuration
 
 ## Serving static assets with nginx
 
@@ -68,4 +95,5 @@ TODO
 
 TODO
 
-[react]: http://facebook.github.io/react
+[React]: http://facebook.github.io/react
+[xcss]: https://github.com/andreypopp/xcss

@@ -1,0 +1,5 @@
+@require "../url" as url;
+
+body {
+  background: url(./image.png);
+}

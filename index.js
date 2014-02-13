@@ -28,8 +28,8 @@ function createRegistry(options) {
       return url
     },
 
-    requireAssets: function(id) {
-      var basedir = getCallsiteDirname();
+    requireAssets: function(id, basedir) {
+      basedir = basedir || getCallsiteDirname();
       var filename = resolve(id, {basedir: basedir});
       return registry.makeURL(filename);
     }
