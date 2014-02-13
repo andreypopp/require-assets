@@ -43,7 +43,7 @@ function getRegistry(options) {
   if (options.prefix || options.root) {
     return createRegistry(options);
   } else if (options.registry) {
-    return isString(registry) ? fromFilename(registry) : registry;
+    return isString(options.registry) ? fromFilename(options.registry) : options.registry;
   } else {
     return process.__requireStaticRegistry;
   }
