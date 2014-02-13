@@ -2,7 +2,7 @@
 
 module.exports = function() {
   throw new Error(
-    "you should use require-static/browserify plugin instead:\n" +
-    "browserify -p [ require-static/browserify --output ./map.json ] ..."
+    "you should use require-assets/browserify plugin instead:\n" +
+    "browserify -p [ require-assets/browserify --output ./map.json ] ..."
   );
 };

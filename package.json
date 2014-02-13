@@ -9,19 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/andreypopp/require-static"
+    "url": "git://github.com/andreypopp/require-assets"
   },
   "keywords": [
-    "require-static",
+    "require-assets",
+    "assets",
     "require",
     "commonjs"
   ],
   "author": "Andrey Popp <8mayday@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andreypopp/require-static/issues"
+    "url": "https://github.com/andreypopp/require-assets/issues"
   },
-  "homepage": "https://github.com/andreypopp/require-static",
+  "homepage": "https://github.com/andreypopp/require-assets",
   "dependencies": {
     "get-callsite-dirname": "~0.1.0",
     "resolve": "~0.6.1",

@@ -28,7 +28,7 @@ function createRegistry(options) {
       return url
     },
 
-    static: function(id) {
+    requireAssets: function(id) {
       var basedir = getCallsiteDirname();
       var filename = resolve(id, {basedir: basedir});
       return registry.makeURL(filename);
@@ -81,7 +81,8 @@ if (!process.__requireStaticRegistry) {
   process.__requireStaticRegistry = createRegistry();
 }
 
-module.exports = process.__requireStaticRegistry.static;
+module.exports = process.__requireStaticRegistry.requireAssets;
+module.exports.requireAssets = process.__requireStaticRegistry.requireAssets;
 module.exports.registry = process.__requireStaticRegistry;
 
 module.exports.fromJSON = fromJSON;
