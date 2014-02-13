@@ -1,0 +1,5 @@
+@require "../index" as requireAssets;
+
+body {
+  background: url(requireAssets(./image.png));
+}

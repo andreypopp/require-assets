@@ -1,0 +1,31 @@
+{
+  "name": "require-assets",
+  "version": "0.0.0",
+  "description": "Require static assets from your code",
+  "main": "index.js",
+  "browser": "browser.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andreypopp/require-static"
+  },
+  "keywords": [
+    "require-static",
+    "require",
+    "commonjs"
+  ],
+  "author": "Andrey Popp <8mayday@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreypopp/require-static/issues"
+  },
+  "homepage": "https://github.com/andreypopp/require-static",
+  "dependencies": {
+    "get-callsite-dirname": "~0.1.0",
+    "resolve": "~0.6.1",
+    "through": "~2.3.4",
+    "lodash": "~2.4.1"
+  }
+}
