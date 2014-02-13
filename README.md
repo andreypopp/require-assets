@@ -1,9 +1,6 @@
 # require-assets
 
-An approach to package and re-use static assets. The idea is to resolve
-references to static assets across a codebase to URLs.
-
-[module id]: http://nodejs.org/api/modules.html#modules_file_modules
+A library to package and re-use static assets.
 
 ## Installation
 
@@ -19,6 +16,8 @@ with:
     % make install example
 
 ## Concepts
+
+The idea is to resolve references to static assets across a codebase to URLs.
 
 The library exports a single function `requireAssets(...)`. It accepts an asset
 [module id][] and returns a corresponding URL.
@@ -97,3 +96,4 @@ TODO
 
 [React]: http://facebook.github.io/react
 [xcss]: https://github.com/andreypopp/xcss
+[module id]: http://nodejs.org/api/modules.html#modules_file_modules

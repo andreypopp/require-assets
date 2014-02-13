@@ -50,6 +50,10 @@ function transform(filename, options) {
   return through(
     function(c) { src += c; },
     function() {
+      // XXX: Replace with proper parser/transformer
+      // Currently it uses creationix's mine for parsing requireAssets(...)
+      // calls but it's unreliable for situations like requireAssets("some" ),
+      // note the space between "some" and ).
       var mined = miner(src);
 
       for (var i = mined.length - 1; i >= 0; i--) {
