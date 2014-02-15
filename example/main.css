@@ -1,5 +1,3 @@
-@require "require-assets-xcss/url" as url;
-
 body {
   background: url(./image.png);
 }
