@@ -110,8 +110,12 @@ if (!process.__requireStaticRegistry) {
   var registry = process.__requireStaticRegistry = createRegistry();
 }
 
-module.exports = registry.requireAssets;
-module.exports.requireAssets = registry.requireAssets;
+function requireAssets(id, basedir) {
+  return registry.requireAssets(id, basedir);
+};
+
+module.exports = requireAssets;
+module.exports.requireAssets = requireAssets;
 module.exports.registry = registry;
 
 module.exports.getRegistry = getRegistry;
