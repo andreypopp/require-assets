@@ -36,6 +36,7 @@
     "xcss": "~1.2.4",
     "browserify": "~3.28.2",
     "require-assets-browserify": "git+https://github.com/andreypopp/require-assets-browserify#master",
+    "require-assets-xcss": "git+https://github.com/andreypopp/require-assets-xcss#master",
     "jshint": "~2.4.3"
   }
 }

@@ -43,32 +43,7 @@ Then you can use it to get the URL of the needed static assets (an example uses
       }
     })
 
-If code executes on server (Node.js) then you will be able to access the
-registry via `requireAssets.registry`.
-
-Otherwise you'd need to extract the registry from your JavaScript code. Library
-provides `require-assets/browserify` transform for browserify which helps with
-that:
-
-    % browserify -p [ require-assets/browserify --output ./assets.json ] ...
-
-## Extracting asset registry from stylesheets
-
-It is also useful to be able to reference assets (such as fonts, images, ...)
-from stylesheets.
-
-If you are happen to use [xcss][], it is quite straightforward:
-
-    @require "require-assets/url" as url
-
-    .Component {
-      background-image: url(./spinner.gif)
-    }
-
-THe library includes transform for [xcss][] transforms which resolves arguments
-of `url(...)` calls and builds an asset registry from that:
-
-    % xcss -t [ require-assets/xcss --output ./assets.json ] ...
+You can access the asset registry via `requireAssets.registry`.
 
 ## Serving assets with connect/express middleware
 
