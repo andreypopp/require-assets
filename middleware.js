@@ -12,7 +12,7 @@ var fs = require('fs');
  *                    passed then the global instance will be used.
  */
 function makeServeStatic(registry) {
-  registry = registry || require('./index').registry;
+  registry = registry || require('./index').currentRegistry();
   return function serveStatic(req, res, next) {
     var filename = registry.urlToFilename[req.originalUrl];
     if (!filename) return next();

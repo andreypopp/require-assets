@@ -111,12 +111,16 @@ if (!process.__requireStaticRegistry) {
 }
 
 function requireAssets(id, basedir) {
-  return registry.requireAssets(id, basedir);
+  return process.__requireStaticRegistry.requireAssets(id, basedir);
 };
+
+function currentRegistry() {
+  return process.__requireStaticRegistry;
+}
 
 module.exports = requireAssets;
 module.exports.requireAssets = requireAssets;
-module.exports.registry = registry;
+module.exports.currentRegistry = currentRegistry;
 
 module.exports.getRegistry = getRegistry;
 module.exports.configure = configure
