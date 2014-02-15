@@ -28,7 +28,6 @@
   "dependencies": {
     "get-callsite-dirname": "~0.1.0",
     "resolve": "~0.6.1",
-    "through": "~2.3.4",
     "lodash": "~2.4.1"
   },
   "devDependencies": {
