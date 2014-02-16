@@ -8,8 +8,11 @@ function handleCSS(filename, url, registry) {
 
   var basedir = path.dirname(filename);
 
-  asset.src = fs.readFileSync(filename, 'utf8').replace(
-    /([^a-zA-Z0-9])url\(([^\)]+)\)/g, function(_m, prefix, ref) {
+  var src = fs.readFileSync(filename, 'utf8');
+
+  src = src.replace(
+    /([^a-zA-Z0-9])url\(([^\)]+)\)/g,
+    function(_m, prefix, ref) {
       ref = ref
         .replace(/^'/, '').replace(/'$/, '')
         .replace(/^"/, '').replace(/"$/, '');
@@ -23,6 +26,17 @@ function handleCSS(filename, url, registry) {
       var result = registry.requireAssets(ref, basedir);
       return prefix + 'url(' + result + suffix + ')';
     });
+
+  src = src.replace(
+    /# sourceMappingURL=([^ $\*]+)/,
+    function(_m, ref) {
+      if (ref[0] !== '.')
+        ref = './' + ref;
+      var result = registry.requireAssets(ref, basedir);
+      return '# sourceMappingURL=' + result;
+    });
+
+  asset.src = src;
 
   return asset;
 }
