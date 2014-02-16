@@ -51,9 +51,7 @@ function fromJSON(data, options) {
   if (isString(data))
     data = JSON.parse(data);
   var registry = createRegistry(options);
-  for (var k in data) {
-    registry.addMapping(data[k], k);
-  }
+  registry.mapping = data;
   return registry;
 }
 
