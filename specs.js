@@ -15,6 +15,24 @@ describe('require-assets', function() {
     assert.equal(url, '/assets/specs.js');
     var asset = registry.mapping[url];
     assert.ok(asset);
+
+    assert.ok(asset.result);
+    assert.equal(asset.result, '/assets/specs.js');
+
+    assert.ok(asset.filename);
+    assert.equal(asset.filename, require.resolve('./specs.js'));
+  });
+
+  it('can be serialized to JSON and restored back', function() {
+    var registry = requireAssets.currentRegistry();
+    var url = requireAssets('./specs.js');
+    assert.equal(url, '/assets/specs.js');
+
+    registry = requireAssets.fromJSON(JSON.stringify(registry));
+    var asset = registry.mapping[url];
+    assert.ok(asset.result);
+    assert.equal(asset.result, '/assets/specs.js');
+
     assert.ok(asset.filename);
     assert.equal(asset.filename, require.resolve('./specs.js'));
   });
@@ -41,5 +59,6 @@ describe('require-assets', function() {
       assert.ok(asset.ok);
       assert.equal(asset.filename, require.resolve('./specs.js'));
     });
+
   });
 });
