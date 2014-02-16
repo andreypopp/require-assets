@@ -7,6 +7,9 @@
   "globals": {
     "Buffer": false,
     "require": false,
+    "describe": false,
+    "it": false,
+    "beforeEach": false,
     "process": false,
     "module": false,
     "exports": false,

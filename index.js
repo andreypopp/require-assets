@@ -1,129 +1,92 @@
 "use strict";
-/**
- * Node runtime.
- */
+
 var path                = require('path');
 var fs                  = require('fs');
 var getCallsiteDirname  = require('get-callsite-dirname');
 var resolve             = require('resolve/lib/sync');
 var isString            = require('lodash').isString;
 
-/**
- * Create a new assets registry.
- */
 function createRegistry(options) {
   options = options || {};
 
+  var root = options.root || process.cwd();
+  var prefix = options.prefix || process.env.REQUIRE_ASSETS_PREFIX || '/assets/';
+  var handlers = options.handlers || {};
+
   var registry = {
-    root: options.root || process.cwd(),
+    mapping: {},
 
-    prefix: options.prefix || process.env.REQUIRE_STATIC_PREFIX || '/assets/',
-
-    urlToFilename: {},
-
-    filenameToUrl: {},
+    handlers: handlers,
+    root: root,
+    prefix: prefix,
 
     toJSON: function() {
-      return registry.urlToFilename;
+      return registry.mapping;
     },
 
-    makeURL: function(filename) {
-      var url = path.join(registry.prefix, path.relative(registry.root, filename));
-      registry.urlToFilename[url] = filename;
-      registry.filenameToUrl[filename] = url;
+    createURL: function(filename) {
+      return path.join(registry.prefix, path.relative(registry.root, filename));
+    },
+
+    addMapping: function(filename, url) {
+      url = url || registry.createURL(filename);
+      var extname = path.extname(filename);
+      var handler = registry.handlers[extname.slice(1)];
+
+      registry.mapping[url] = handler ?
+        handler(filename, url, registry) :
+        {filename: filename};
+
       return url
     },
 
     requireAssets: function(id, basedir) {
       basedir = basedir || getCallsiteDirname();
       var filename = resolve(id, {basedir: basedir});
-      return registry.makeURL(filename);
+      return registry.addMapping(filename);
     }
   };
   return registry;
 }
 
-
-/**
- * Help from getting registry out of options.
- *
- * Works as follows:
- *
- *  - check if options.registry is already here
- *    - if it's a string, interpret as filename
- *    - otherwise return
- *  - check if options.prefix or options.root is available and create a new
- *    registry with these parameters
- *  - otherwise return global registry
- *
- * XXX: We can make it more useful (like returning the same registry when we get
- * the same args).
- */
-function getRegistry(options) {
-  if (options.registry) {
-    return isString(options.registry) ? fromFilename(options.registry) : options.registry;
-  } else if (options.prefix || options.root) {
-    return createRegistry(options);
-  } else {
-    return process.__requireStaticRegistry;
-  }
-}
-
-/**
- * Construct a new registry from a JSON object.
- */
 function fromJSON(data, options) {
   if (isString(data))
     data = JSON.parse(data);
   var registry = createRegistry(options);
   for (var k in data) {
-    registry.urlToFilename[k] = data[k];
-    registry.filenameToUrl[data[k]] = k;
+    registry.addMapping(data[k], k);
   }
   return registry;
 }
 
-/**
- * Construct a new registry by reading it from filesystem.
- */
-function fromFilename(filename, options) {
+function fromFile(filename, options) {
   var data = fs.readFileSync(filename, 'utf8');
   return fromJSON(data);
 }
 
-/**
- * Configure a new global registry.
- */
-function configure(options) {
-  process.__requireStaticRegistry = options.requireAssets && options.urlToFilename ?
-    options : createRegistry(options);
-}
-
-/**
- * Initialize registry on process so even if app includes several versions of 
- * require-assets we still have a single registry.
- *
- * TODO: If registry already exists check its version and throw on major version
- * incompatibility.
- */
-if (!process.__requireStaticRegistry) {
-  var registry = process.__requireStaticRegistry = createRegistry();
-}
-
 function requireAssets(id, basedir) {
-  return process.__requireStaticRegistry.requireAssets(id, basedir);
-};
+  basedir = basedir || getCallsiteDirname();
+  return process.__requireAssetsRegistry.requireAssets(id, basedir);
+}
+
+function configureRegistry(registry) {
+  process.__requireAssetsRegistry = registry;
+}
 
 function currentRegistry() {
-  return process.__requireStaticRegistry;
+  return process.__requireAssetsRegistry;
+}
+
+if (!process.__requireAssetsRegistry) {
+  process.__requireAssetsRegistry = createRegistry();
 }
 
 module.exports = requireAssets;
 module.exports.requireAssets = requireAssets;
-module.exports.currentRegistry = currentRegistry;
 
-module.exports.getRegistry = getRegistry;
-module.exports.configure = configure
+module.exports.currentRegistry = currentRegistry;
+module.exports.configureRegistry = configureRegistry
 module.exports.createRegistry = createRegistry;
+
 module.exports.fromJSON = fromJSON;
-module.exports.fromFilename = fromFilename;
+module.exports.fromFile = fromFile;
