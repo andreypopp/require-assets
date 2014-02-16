@@ -5,6 +5,7 @@ var fs                  = require('fs');
 var getCallsiteDirname  = require('get-callsite-dirname');
 var resolve             = require('resolve/lib/sync');
 var isString            = require('lodash').isString;
+var handleCSS           = require('./handlers/css');
 
 function createRegistry(options) {
   options = options || {};
@@ -12,6 +13,9 @@ function createRegistry(options) {
   var root = options.root || process.cwd();
   var prefix = options.prefix || process.env.REQUIRE_ASSETS_PREFIX || '/assets/';
   var handlers = options.handlers || {};
+
+  if (!handlers.css)
+    handlers.css = handleCSS;
 
   var registry = {
     mapping: {},

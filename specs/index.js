@@ -1,7 +1,7 @@
 "use strict";
 
 var assert        = require('assert');
-var requireAssets = require('./index');
+var requireAssets = require('../index');
 
 describe('require-assets', function() {
 
@@ -11,30 +11,30 @@ describe('require-assets', function() {
 
   it('adds a mapping to registry on requireAssets(...) call', function() {
     var registry = requireAssets.currentRegistry();
-    var url = requireAssets('./specs.js');
-    assert.equal(url, '/assets/specs.js');
+    var url = requireAssets('./index.js');
+    assert.equal(url, '/assets/specs/index.js');
     var asset = registry.mapping[url];
     assert.ok(asset);
 
     assert.ok(asset.result);
-    assert.equal(asset.result, '/assets/specs.js');
+    assert.equal(asset.result, '/assets/specs/index.js');
 
     assert.ok(asset.filename);
-    assert.equal(asset.filename, require.resolve('./specs.js'));
+    assert.equal(asset.filename, require.resolve('./index.js'));
   });
 
   it('can be serialized to JSON and restored back', function() {
     var registry = requireAssets.currentRegistry();
-    var url = requireAssets('./specs.js');
-    assert.equal(url, '/assets/specs.js');
+    var url = requireAssets('./index.js');
+    assert.equal(url, '/assets/specs/index.js');
 
     registry = requireAssets.fromJSON(JSON.stringify(registry));
     var asset = registry.mapping[url];
     assert.ok(asset.result);
-    assert.equal(asset.result, '/assets/specs.js');
+    assert.equal(asset.result, '/assets/specs/index.js');
 
     assert.ok(asset.filename);
-    assert.equal(asset.filename, require.resolve('./specs.js'));
+    assert.equal(asset.filename, require.resolve('./index.js'));
   });
 
   describe('registry with custom handlers', function() {
@@ -51,14 +51,32 @@ describe('require-assets', function() {
 
     it('adds a mapping to registry on requireAssets(...) call', function() {
       var registry = requireAssets.currentRegistry();
-      var url = requireAssets('./specs.js');
-      assert.equal(url, '/assets/specs.js');
+      var url = requireAssets('./index.js');
+      assert.equal(url, '/assets/specs/index.js');
       var asset = registry.mapping[url];
       assert.ok(asset);
       assert.ok(asset.filename);
       assert.ok(asset.ok);
-      assert.equal(asset.filename, require.resolve('./specs.js'));
+      assert.equal(asset.filename, require.resolve('./index.js'));
     });
 
+  });
+
+
+  describe('handling CSS assets', function() {
+
+    it('handles CSS assets by transforming its source', function() {
+      var registry = requireAssets.currentRegistry();
+      var url = requireAssets('./fixtures/styles.css');
+      assert.equal(url, '/assets/specs/fixtures/styles.css');
+      var asset = registry.mapping[url];
+      assert.ok(asset);
+      assert.ok(asset.filename);
+      assert.equal(asset.filename, require.resolve('./fixtures/styles.css'));
+      assert.ok(asset.src);
+
+      assert.ok(registry.mapping['/assets/specs/fixtures/helpers.css']);
+      assert.ok(registry.mapping['/assets/specs/fixtures/image.png']);
+    });
   });
 });
