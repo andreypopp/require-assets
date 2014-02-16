@@ -25,7 +25,7 @@ describe('require-assets', function() {
       requireAssets.configureRegistry(requireAssets.createRegistry({
         handlers: {
           js: function(filename, url, registry) {
-            return {filename: filename, ok: true};
+            return {filename: filename, ok: true, result: url};
           }
         }
       }));

@@ -33,17 +33,15 @@ function createRegistry(options) {
       var extname = path.extname(filename);
       var handler = registry.handlers[extname.slice(1)];
 
-      registry.mapping[url] = handler ?
+      return registry.mapping[url] = handler ?
         handler(filename, url, registry) :
-        {filename: filename};
-
-      return url
+        {filename: filename, result: url};
     },
 
     requireAssets: function(id, basedir) {
       basedir = basedir || getCallsiteDirname();
       var filename = resolve(id, {basedir: basedir});
-      return registry.addMapping(filename);
+      return registry.addMapping(filename).result;
     }
   };
   return registry;
