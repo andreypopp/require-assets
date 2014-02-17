@@ -11,7 +11,7 @@ function createRegistry(options) {
   options = options || {};
 
   var root = options.root || process.cwd();
-  var prefix = options.prefix || process.env.REQUIRE_ASSETS_PREFIX || '/assets/';
+  var prefix = options.prefix || process.env.REQUIRE_ASSETS_PREFIX || '';
   var handlers = options.handlers || {};
 
   if (!handlers.css)
